@@ -1,32 +1,25 @@
 import {ListRenderItem} from '@react-native/virtualized-lists';
-import React, {PropsWithoutRef} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {useQuery} from '@tanstack/react-query';
+import React from 'react';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {api, ImageData} from '../api/dummy';
 import {rem} from '../shared/style';
 import {ArtPreview} from './ArtPreview';
 
-export type ImageData = {
-  title: string;
-  artist: string;
-  price: number;
-  uri: string;
-};
+export const ArtPreviewList: React.FC = function () {
+  const {isSuccess, isLoading, data} = useQuery(['images'], api.getImages, {});
 
-export type ArtPreviewListProps = PropsWithoutRef<{
-  images: ImageData[];
-}>;
-
-export const ArtPreviewList: React.FC<ArtPreviewListProps> = function ({
-  images,
-}) {
   return (
     <FlatList
-      data={images}
+      data={isSuccess ? data : []}
+      refreshing={isLoading}
       renderItem={ArtPreviewListEntry}
       keyExtractor={image => image.uri}
       numColumns={2}
       horizontal={false}
       columnWrapperStyle={styles.listColumnWrapper}
       ItemSeparatorComponent={ArtPreviewListSeparator}
+      ListEmptyComponent={<Text>Loading...</Text>}
     />
   );
 };
