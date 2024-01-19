@@ -5,8 +5,11 @@
  * @format
  */
 
-import React from 'react';
-import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
+import React, {useCallback} from 'react';
+import {Button, SafeAreaView, StatusBar, useColorScheme} from 'react-native';
+import {trigger} from 'react-native-haptic-feedback';
+
+// Optional configuration
 
 import {QueryProvider} from './api/queryClient';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -19,6 +22,14 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const onPress = useCallback(() => {
+    const options = {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    };
+    trigger('impactLight', options);
+  }, []);
+
   return (
     <QueryProvider>
       <SafeAreaView style={backgroundStyle}>
@@ -26,6 +37,7 @@ function App(): JSX.Element {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
+        <Button title="Click me" onPress={onPress} />
         <ArtPreviewList />
       </SafeAreaView>
     </QueryProvider>
